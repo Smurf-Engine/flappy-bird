@@ -9,6 +9,7 @@ export class Player extends GameObject {
         x: 0,
         y: 0
     };
+    speedX = 0;
     gravity = .05;
     constructor(canvas: HTMLCanvasElement) {
         super(canvas);
@@ -28,6 +29,7 @@ export class Player extends GameObject {
         this.draw();
 
         this.position.y += this.velocity.y;
+        this.position.x += this.velocity.x + this.speedX;
 
         if (this.position.y + this.height + this.velocity.y <= this.canvas.height) {
             // add gravity every frame
@@ -39,12 +41,25 @@ export class Player extends GameObject {
         console.log(this.velocity.y);
 
         // if input is pressed
-        if(globalThis.input.isPressed(Key.Space)){
+        if (input.isPressed(Key.Space) || input.isPressed(Key.W)) {
             this.jump();
         }
+
+        if (input.isPressed(Key.D)) {
+            this.speedX += .1;
+        }
+        else if (input.isPressed(Key.A)) {
+            this.speedX -= .1;
+        }
+
+        if (!input.isPressed(Key.D) && !input.isPressed(Key.A)) {
+            this.speedX = 0;
+        }
+
+
     }
 
-    jump(factor : number = 3){
+    jump(factor: number = 3) {
         this.velocity.y = -factor;
     }
 }

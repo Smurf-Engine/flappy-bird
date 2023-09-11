@@ -21,7 +21,16 @@ export class Key {
     constructor(public label: string) { }
 
     static get Space(): Key {
-        return new Key("Space");
+        return new Key("SPACE");
+    }
+    static get D(): Key {
+        return new Key("KEYD");
+    }
+    static get A(): Key {
+        return new Key("KEYA");
+    }
+    static get W(): Key {
+        return new Key("KEYW");
     }
 }
 
@@ -35,15 +44,15 @@ export class Input {
     @autobind
     private onKeyDown(e: KeyboardEvent) {
         // add key if not present
-        if (this.pressedKeyCodes.find((k) => k == e.code) == undefined) {
-            this.pressedKeyCodes.push(e.code);
+        if (this.pressedKeyCodes.find((k) => k == e.code.toUpperCase()) == undefined) {
+            this.pressedKeyCodes.push(e.code.toUpperCase());
         }
     }
 
     @autobind
     private onKeyUp(e: KeyboardEvent) {
         // remove key if present
-        let index = this.pressedKeyCodes.findIndex((k) => k == e.code);
+        let index = this.pressedKeyCodes.findIndex((k) => k == e.code.toUpperCase());
         if (index == -1) return;
         this.pressedKeyCodes.splice(index, 1);
     }
