@@ -1,4 +1,5 @@
 import { GameObject } from "./game_object";
+import { Key } from "./keyboard_manager";
 import { vec2 } from "./vec2";
 
 export class Player extends GameObject {
@@ -36,6 +37,11 @@ export class Player extends GameObject {
         }
 
         console.log(this.velocity.y);
+
+        // if input is pressed
+        if(globalThis.input.isPressed(Key.Space)){
+            this.jump();
+        }
     }
 
     jump(factor : number = 3){
