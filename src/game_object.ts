@@ -5,5 +5,8 @@ export class GameObject {
         x: 0,
         y: 0
     };
-    constructor(public readonly ctx: CanvasRenderingContext2D) { }
+    ctx : CanvasRenderingContext2D;
+    constructor(public readonly canvas: HTMLCanvasElement) {
+        this.ctx = canvas.getContext("2d")!;
+    }
 }

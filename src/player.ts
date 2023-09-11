@@ -4,13 +4,13 @@ import { vec2 } from "./vec2";
 export class Player extends GameObject {
     width = 30;
     height = 30;
-    velocity : vec2 = {
-        x : 0,
-        y : 0
+    velocity: vec2 = {
+        x: 0,
+        y: 0
     };
     gravity = .05;
-    constructor(ctx: CanvasRenderingContext2D) {
-        super(ctx);
+    constructor(canvas: HTMLCanvasElement) {
+        super(canvas);
 
         this.position = {
             x: 100,
@@ -18,16 +18,27 @@ export class Player extends GameObject {
         };
     }
 
-    private draw(){
+    private draw() {
         this.ctx.fillStyle = "red";
-        this.ctx.fillRect(this.position.x,this.position.y,this.width,this.height);
+        this.ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
     }
 
-    update(){
+    update() {
         this.draw();
 
         this.position.y += this.velocity.y;
 
-        this.velocity.y += this.gravity;
+        if (this.position.y + this.height + this.velocity.y <= this.canvas.height) {
+            // add gravity every frame
+            this.velocity.y += this.gravity;
+        } else {
+            this.velocity.y = 0;
+        }
+
+        console.log(this.velocity.y);
+    }
+
+    jump(factor : number = 3){
+        this.velocity.y = -factor;
     }
 }
