@@ -9,4 +9,11 @@ canvas.height = 500;
 const ctx = canvas.getContext("2d")!;
 
 const player = new Player(ctx);
-player.draw();
+
+const animate = () => {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  player.update();
+  requestAnimationFrame(animate);
+};
+
+animate();
