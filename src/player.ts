@@ -1,5 +1,6 @@
 import { GameObject } from "./game_object";
 import { Key } from "./keyboard_manager";
+import { Platform } from "./platform";
 import { vec2 } from "./vec2";
 
 export class Player extends GameObject {
@@ -14,8 +15,8 @@ export class Player extends GameObject {
         super(canvas);
 
         this.position = {
-            x: 100,
-            y: 100
+            x: canvas.width - 100,
+            y: canvas.height - 100,
         };
     }
 
@@ -25,6 +26,7 @@ export class Player extends GameObject {
     }
 
     get isMidAir() {
+        // @ts-ignore
         return this.velocity.y != 0;
     }
 
@@ -42,29 +44,40 @@ export class Player extends GameObject {
 
         // if input is pressed
         if (input.isPressed(Key.Space) || input.isPressed(Key.W)) {
-            // if player is not mid air
-            if (!this.isMidAir){
+            // if player is not mid air OR its y velocity is exactly equal to its gravity (which happens because as collision sets y to 0, gravity still gets added for that 1 frame but will be set 0 during next loop)
+            if (!this.isMidAir || this.velocity.y == this.gravity) {
                 this.jump();
             }
         }
 
-        if (input.isPressed(Key.A)) {
+        if (input.isPressed(Key.A) && this.position.x > 50) {
             this.moveLeft();
         }
-
-        if (input.isPressed(Key.D)) {
+        else if (input.isPressed(Key.D) && this.position.x < this.canvas.width - 50) {
             this.moveRight();
         }
-
-        if (!input.isPressed(Key.A) && !input.isPressed(Key.D)) {
+        else {
             // if no input is pressed, stop player from moving horizontally
             this.velocity.x = 0;
+
+            // move all platforms if player has hit the edges
+            gameObjects.forEach(obj => {
+                if (obj instanceof Platform) {
+                    let platform = obj as Platform;
+
+                    if (input.isPressed(Key.A)) {
+                        platform.position.x+= 2;
+                    } else if (input.isPressed(Key.D)) {
+                        platform.position.x-= 2;
+                    }
+                }
+            });
         }
-        
+
 
         // add friction and clamp velocity
         this.velocity.x = Math.max(-5, Math.min(5, this.velocity.x * .9));
-        console.log(this.velocity.x);
+        console.log("From Player", this.velocity);
     }
 
     moveLeft() {
