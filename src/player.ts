@@ -7,10 +7,9 @@ export class Player extends GameObject {
     height = 30;
     velocity: vec2 = {
         x: 0,
-        y: 0
+        y: 1
     };
-    speedX = 0;
-    gravity = .05;
+    gravity = .15;
     constructor(canvas: HTMLCanvasElement) {
         super(canvas);
 
@@ -25,11 +24,14 @@ export class Player extends GameObject {
         this.ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
     }
 
+    get isMidAir() {
+        return this.velocity.y != 0;
+    }
+
     update() {
         this.draw();
-
+        this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
-        this.position.x += this.velocity.x + this.speedX;
 
         if (this.position.y + this.height + this.velocity.y <= this.canvas.height) {
             // add gravity every frame
@@ -38,28 +40,42 @@ export class Player extends GameObject {
             this.velocity.y = 0;
         }
 
-        console.log(this.velocity.y);
-
         // if input is pressed
         if (input.isPressed(Key.Space) || input.isPressed(Key.W)) {
-            this.jump();
+            // if player is not mid air
+            if (!this.isMidAir){
+                this.jump();
+            }
+        }
+
+        if (input.isPressed(Key.A)) {
+            this.moveLeft();
         }
 
         if (input.isPressed(Key.D)) {
-            this.speedX += .1;
-        }
-        else if (input.isPressed(Key.A)) {
-            this.speedX -= .1;
+            this.moveRight();
         }
 
-        if (!input.isPressed(Key.D) && !input.isPressed(Key.A)) {
-            this.speedX = 0;
+        if (!input.isPressed(Key.A) && !input.isPressed(Key.D)) {
+            // if no input is pressed, stop player from moving horizontally
+            this.velocity.x = 0;
         }
+        
 
-
+        // add friction and clamp velocity
+        this.velocity.x = Math.max(-5, Math.min(5, this.velocity.x * .9));
+        console.log(this.velocity.x);
     }
 
-    jump(factor: number = 3) {
-        this.velocity.y = -factor;
+    moveLeft() {
+        this.velocity.x -= 1;
+    }
+
+    moveRight() {
+        this.velocity.x += 1;
+    }
+
+    jump(factor: number = 8) {
+        this.velocity.y -= factor;
     }
 }
